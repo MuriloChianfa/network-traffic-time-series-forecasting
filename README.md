@@ -18,7 +18,7 @@ Running model evaluations
 
 ```bash
 cd src/forecast
-python3 -m ipykernel install --user --name=venv
+virtualenv -p python3.11 venv
 . ./venv/bin/activate
 pip install -r requirements.txt
 ```
