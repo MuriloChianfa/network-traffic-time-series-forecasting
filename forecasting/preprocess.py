@@ -9,9 +9,9 @@ def get_dataset(name):
     df = None
 
     if name == 'MK-VLAN33':
-        df = pd.read_csv('../../datasets/rt-mk-vlan33-bps-from-19-to-25-october.csv')
+        df = pd.read_csv('../datasets/rt-mk-vlan33-bps-from-19-to-25-october.csv')
     else:
-        df = pd.read_csv('../../datasets/rt-hw-ne8k-link-level3-bps-inbound-from-20-to-26-of-october-2024.csv')
+        df = pd.read_csv('../datasets/rt-hw-ne8k-link-level3-bps-inbound-from-20-to-26-of-october-2024.csv')
 
     df['date'] = pd.to_datetime(df['date'], format='%Y%m%d%H%M')
     df.sort_values('date', inplace=True)
