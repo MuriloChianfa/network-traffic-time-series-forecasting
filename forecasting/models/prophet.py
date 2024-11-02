@@ -3,14 +3,7 @@ from prophet import Prophet
 from matplotlib.ticker import EngFormatter
 import matplotlib.pyplot as plt
 
-def run(df, timeslot='5min'):
-    df_freq_mod = df.copy()
-    if timeslot != '5min':
-        df_freq_mod['date'] = pd.to_datetime(df['date'], format='%Y%m%d%H%M')
-        df_freq_mod.set_index('date')
-
-        df_freq_mod = df_freq_mod.groupby(pd.Grouper(key='date', freq=timeslot))["bps"].mean().reset_index().fillna(0)[:-1]
-
+def run(df):
     df_prophet = df[['date', 'bps']].rename(columns={'date': 'ds', 'bps': 'y'})
 
     model = Prophet()

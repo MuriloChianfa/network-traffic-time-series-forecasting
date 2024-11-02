@@ -35,8 +35,7 @@ def simpleLSTM(X_train, y_train, X_valid, y_valid, epochs, neurons, num_layers=2
 
     return model, history
 
-def run(df, parameters):
-    bps_scaled, bps_scaler = trace_scaler(df['bps'])
+def run(df, bps_scaled, bps_scaler, parameters):
     X, y = prepare_df_split(bps_scaled)
     train_len = parameters['train_valid_test_split'][0]
     valid_len = parameters['train_valid_test_split'][1] - train_len
@@ -92,13 +91,13 @@ def run(df, parameters):
     base_time = pd.to_datetime([df['date'][0]], format='%Y%m%d%H%M')[0]
 
     len_dates_train = len(dates_train)
-    train_line = [base_time + timedelta(minutes=5 * i) for i in range(len_dates_train)][-1]
+    train_line = [base_time + timedelta(minutes=parameters['timeslot'] * i) for i in range(len_dates_train)][-1]
 
     len_dates_valid = len(dates_valid)
-    valid_line = [base_time + timedelta(minutes=5 * i) for i in range(len_dates_train + len_dates_valid)][-1]
+    valid_line = [base_time + timedelta(minutes=parameters['timeslot'] * i) for i in range(len_dates_train + len_dates_valid)][-1]
 
     len_dates_test = len(dates_test)
-    test_line = [base_time + timedelta(minutes=5 * i) for i in range(len_dates_train + len_dates_valid + len_dates_test)][-1]
+    test_line = [base_time + timedelta(minutes=parameters['timeslot'] * i) for i in range(len_dates_train + len_dates_valid + len_dates_test)][-1]
 
     len_all_dates = len(dates_all)
 
@@ -144,16 +143,16 @@ def run(df, parameters):
 
     for legend, position in zip(legends, legend_positions):
         plt.text(
-            pd.to_datetime([[base_time + timedelta(minutes=5 * i) for i in range(int(len_all_dates * position))][-1]], format='%Y%m%d%H%M')[0],
+            pd.to_datetime([[base_time + timedelta(minutes=parameters['timeslot'] * i) for i in range(int(len_all_dates * position))][-1]], format='%Y%m%d%H%M')[0],
             0.95 * plt.ylim()[1],
             legend, verticalalignment='top', fontdict={'fontsize': 'xx-large'}
         )
 
     plt.legend()
     #plt.show()
-    return model, bps_scaled, bps_scaler, fig, fig_model
+    return model, fig, fig_model
 
-def forecast_the_future(df, model, bps_scaled, bps_scaler, future=144, seq_length=10):
+def forecast_the_future(df, model, bps_scaled, bps_scaler, future=144, timeslot=5, seq_length=10):
     future_steps = future
 
     last_sequence = bps_scaled[-seq_length:]
@@ -169,7 +168,7 @@ def forecast_the_future(df, model, bps_scaled, bps_scaler, future=144, seq_lengt
     future_predictions = bps_scaler.inverse_transform(np.array(future_predictions_scaled).reshape(-1, 1))
 
     last_date = df['date'].iloc[-1]
-    future_dates = [last_date + datetime.timedelta(minutes=5 * i) for i in range(1, future_steps + 1)]
+    future_dates = [last_date + datetime.timedelta(minutes=timeslot * i) for i in range(1, future_steps + 1)]
 
     df_future = pd.DataFrame({
         'date': future_dates,
