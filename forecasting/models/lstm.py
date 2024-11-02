@@ -31,9 +31,9 @@ def simpleLSTM(X_train, y_train, X_valid, y_valid, epochs, neurons, num_layers=2
     model.compile(optimizer='adam', loss='mse')
 
     print("Training LSTM Model...")
-    model.fit(X_train, y_train, epochs=epochs, verbose=1, validation_data=(X_valid, y_valid))
+    history = model.fit(X_train, y_train, epochs=epochs, verbose=1, validation_data=(X_valid, y_valid))
 
-    return model
+    return model, history
 
 def run(df, parameters):
     bps_scaled, bps_scaler = trace_scaler(df['bps'])
@@ -42,7 +42,16 @@ def run(df, parameters):
     valid_len = parameters['train_valid_test_split'][1] - train_len
     X_train, y_train, X_valid, y_valid, X_test, y_test, dates_train, dates_valid, dates_test = setup_train_valid_test_split(df['date'], X, y, train_len=train_len, valid_len=valid_len)
 
-    model = simpleLSTM(X_train, y_train, X_valid, y_valid, parameters['epochs'], parameters['neurons'], parameters['layers'], num_of_future_forecasts=1)
+    model, history = simpleLSTM(X_train, y_train, X_valid, y_valid, parameters['epochs'], parameters['neurons'], parameters['layers'], num_of_future_forecasts=1)
+
+    fig_model = plt.figure(figsize=(12, 6))
+    plt.plot(history.history['loss'], label='Training loss')
+    plt.plot(history.history['val_loss'], label='Validation loss')
+    plt.title('Model Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend()
+    #plt.show()
 
     train_yhat = model.predict(X_train)
     valid_yhat = model.predict(X_valid)
@@ -142,7 +151,7 @@ def run(df, parameters):
 
     plt.legend()
     #plt.show()
-    return model, bps_scaled, bps_scaler, fig
+    return model, bps_scaled, bps_scaler, fig, fig_model
 
 def forecast_the_future(df, model, bps_scaled, bps_scaler, future=144, seq_length=10):
     future_steps = future
@@ -174,7 +183,6 @@ def forecast_the_future(df, model, bps_scaled, bps_scaler, future=144, seq_lengt
     })
 
     fig = plt.figure(figsize=(27, 9))
-    plt.title("Actual and Forecasted Inbound Network Traffic for Level3 Link", fontdict={'fontsize': 28})
 
     plt.plot(df_combined['date'], df_combined['bps'], label='Actual')
     plt.plot(df_combined['date'], df_combined['predicted'], label='Forecasted', color='orange')

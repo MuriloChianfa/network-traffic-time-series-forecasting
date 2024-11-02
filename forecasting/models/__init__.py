@@ -9,9 +9,10 @@ def hyperparams_by_model(model, ui):
         params['layers'] = ui.slider("Hidden Layers", 1, 32, 4, 1)
         ui.header("Forecasting Parameters")
         params['future_steps'] = ui.slider("Steps towards future", 1, 320, 64, 1)
-    elif model == 'Propeth':
-        K = ui.slider('K', 1, 15)
-        params['K'] = K
+    elif model == 'Prophet':
+        params['timeslot'] = ui.slider("Timeslot", 5, 60, 5, 5)
+        ui.header("Forecasting Parameters")
+        params['future_steps'] = ui.slider("Steps towards future", 1, 864, 288, 1)
     elif model == 'SARIMAX':
         K = ui.slider('K', 1, 15)
         params['K'] = K
