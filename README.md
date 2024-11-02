@@ -9,6 +9,7 @@ Installing python dependencies
 virtualenv -p python3.11 venv
 . ./venv/bin/activate
 pip install -r requirements.txt
+streamlit run forecasting/main.py
 ```
 
 Preprocessing raw netflow data
