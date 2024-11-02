@@ -33,7 +33,7 @@ def plot_timeseries_network_traffic(date, trace, timestep, traceLabel, title=Non
         plt.plot(date, trace, label=traceLabel)
     plt.gca().yaxis.set_major_formatter(formatter)
     plt.legend()
-    plt.savefig(buf, format="png")
+    plt.savefig(buf, format="png", dpi=300, bbox_inches='tight')
     return buf
 
 def prepare_df_split(df, max_len=10):

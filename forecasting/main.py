@@ -56,8 +56,20 @@ def trigger_sarimax(df, results, parameters):
     st.pyplot(fig)
     return df_future, fig
 
-df_future = df.copy()
+def trigger_prophet(df, model, parameters):
+    st.write(prophet.evaluate(model), unsafe_allow_html=True)
+    fig, df_future = prophet.forecast_the_future(model, f"{parameters['timeslot']}min", parameters['future_steps'])
+    st.write('## Forecasting:')
+    st.pyplot(fig)
+    return df_future, fig
 
+def trigger_lstm(df, model, bps_scaled, bps_scaler, parameters):
+    fig, df_future = lstm.forecast_the_future(df, model, bps_scaled, bps_scaler, parameters['future_steps'], parameters['timeslot'])
+    st.write('## Forecasting:')
+    st.pyplot(fig)
+    return df_future, fig
+
+df_future = df.copy()
 option1, _, option2, option3 = st.columns([.4, .05, .1, .45])
 
 option1.write('')
@@ -67,17 +79,13 @@ if option1.button(f"Fit a new model using {model_choice} and predict {parameters
         model, fig, fig_model = lstm.run(df, bps_scaled, bps_scaler, parameters)
         st.write('## Model evaluation:')
         st.pyplot(fig)
-        fig, df_future = lstm.forecast_the_future(df, model, bps_scaled, bps_scaler, parameters['future_steps'], parameters['timeslot'])
-        st.write('## Forecasting:')
-        st.pyplot(fig)
+        df_future, fig = trigger_lstm(df, model, bps_scaled, bps_scaler, parameters)
     elif model_choice == 'Prophet':
-        model = prophet.run(df)
-        fig, df_future = prophet.forecast_the_future(model, f"{parameters['timeslot']}min", parameters['future_steps'])
-        st.write('## Forecasting:')
-        st.pyplot(fig)
+        model = prophet.run(df, parameters)
+        df_future, fig = trigger_prophet(df, model, parameters)
     elif model_choice == 'SARIMAX':
         model, results = sarimax.run(df['bps'], parameters)
-        trigger_sarimax(df, results, parameters)
+        df_future, fig = trigger_sarimax(df, results, parameters)
         model = results
     else:
         st.warning('Invalid model choosed')
@@ -89,10 +97,16 @@ option2.write('## OR')
 uploaded_file = option3.file_uploader("Upload your existing model to save time")
 
 if uploaded_file is not None:
-    results = pickle.loads(uploaded_file.read())
+    model = pickle.loads(uploaded_file.read())
 
     if model_choice == 'SARIMAX':
-        df_future, fig = trigger_sarimax(df, results, parameters)
-        models.download_options(st, results, df_future, fig)
+        df_future, fig = trigger_sarimax(df, model, parameters)
+    elif model_choice == 'Prophet':
+        df_future, fig = trigger_prophet(df, model, parameters)
+    elif model_choice == 'LSTM':
+        df_future, fig = trigger_lstm(df, model, bps_scaled, bps_scaler, parameters)
     else:
         st.warning('Invalid model uploaded')
+        st.stop()
+
+    models.download_options(st, model, df_future, fig)
