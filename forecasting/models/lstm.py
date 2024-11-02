@@ -191,4 +191,4 @@ def forecast_the_future(df, model, bps_scaled, bps_scaler, future=144, timeslot=
 
     plt.legend()
     #plt.show()
-    return fig
+    return fig, df_future

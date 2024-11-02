@@ -1,4 +1,3 @@
-import pandas as pd
 from prophet import Prophet
 from matplotlib.ticker import EngFormatter
 import matplotlib.pyplot as plt
@@ -17,4 +16,4 @@ def forecast_the_future(model, timeslot='5min', num_of_future_steps=288):
     fig = model.plot(forecast)
     formatter = EngFormatter(unit='bps')
     plt.gca().yaxis.set_major_formatter(formatter)
-    return fig
+    return fig, forecast

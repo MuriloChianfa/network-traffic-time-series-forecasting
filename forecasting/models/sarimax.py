@@ -65,9 +65,8 @@ def plot_forecasted(df, pred_ci, forecasted_values, timestep=60, num_of_future_s
     plt.plot(df_combined['date'], df_combined['actual'], label='Forecasted Data', color='orange')
     plt.fill_between(future_dates, 0, pred_ci.iloc[:, 1], color='k', alpha=0.1)
 
-    plt.title('Hourly Inbound Network Traffic Forecast', fontdict={'fontsize': 28})
     formatter = EngFormatter(unit='bps')
     plt.gca().yaxis.set_major_formatter(formatter)
     plt.legend()
     #plt.show()
-    return fig
+    return fig, df_future
