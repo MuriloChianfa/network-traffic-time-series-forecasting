@@ -47,13 +47,25 @@ else:
     st.write('Shape of dataset:', df.shape)
     st.image(get_fig(df))
 
+def trigger_sarimax(df, results, parameters):
+    st.write('## Model summary:')
+    st.write(results.summary())
+    pred_ci, forecasted_values = sarimax.forecast_the_future(results, parameters['future_steps'])
+    fig, df_future = sarimax.plot_forecasted(df, pred_ci, forecasted_values, parameters['timeslot'], parameters['future_steps'])
+    st.write('## Forecasting:')
+    st.pyplot(fig)
+    return df_future, fig
+
 df_future = df.copy()
 
-if st.button(f"Fit model using {model_choice} and Predict {parameters['future_steps']} steps towards future"):
+option1, _, option2, option3 = st.columns([.4, .05, .1, .45])
+
+option1.write('')
+option1.write('')
+if option1.button(f"Fit a new model using {model_choice} and predict {parameters['future_steps']} steps towards future", icon="🔥", use_container_width=True, ):
     if model_choice == 'LSTM':
         model, fig, fig_model = lstm.run(df, bps_scaled, bps_scaler, parameters)
         st.write('## Model evaluation:')
-        # st.pyplot(fig_model)
         st.pyplot(fig)
         fig, df_future = lstm.forecast_the_future(df, model, bps_scaled, bps_scaler, parameters['future_steps'], parameters['timeslot'])
         st.write('## Forecasting:')
@@ -65,25 +77,22 @@ if st.button(f"Fit model using {model_choice} and Predict {parameters['future_st
         st.pyplot(fig)
     elif model_choice == 'SARIMAX':
         model, results = sarimax.run(df['bps'], parameters)
-        pred_ci, forecasted_values = sarimax.forecast_the_future(results, parameters['future_steps'])
-        fig, df_future = sarimax.plot_forecasted(df, pred_ci, forecasted_values, parameters['timeslot'], parameters['future_steps'])
-        st.write('## Forecasting:')
-        st.pyplot(fig)
+        trigger_sarimax(df, results, parameters)
+        model = results
     else:
-        print('invalid model')
+        st.warning('Invalid model choosed')
 
-    col1, col2, col3 = st.columns(3)
+    models.download_options(st, model, df_future, fig)
 
-    csv = df_future.to_csv().encode('utf-8')
-    col1.download_button(label="Download forecasted values as CSV", data=csv, file_name='future_network_traffic.csv', mime='text/csv')
+option2.write('## OR')
 
-    fig_name = "network_traffic_future_forecasting.png"
-    fig.savefig(fig_name, format='png', dpi=300, bbox_inches='tight')
-    with open(fig_name, "rb") as img:
-        col2.download_button(label="Download forecasted image", data=img, file_name=fig_name, mime="image/png")
+uploaded_file = option3.file_uploader("Upload your existing model to save time")
 
-    col3.download_button(
-        "Download fitted model",
-        data=pickle.dumps(model),
-        file_name=f"{model_choice}_model.pkl",
-    )
+if uploaded_file is not None:
+    results = pickle.loads(uploaded_file.read())
+
+    if model_choice == 'SARIMAX':
+        df_future, fig = trigger_sarimax(df, results, parameters)
+        models.download_options(st, results, df_future, fig)
+    else:
+        st.warning('Invalid model uploaded')

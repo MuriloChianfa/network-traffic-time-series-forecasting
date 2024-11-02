@@ -26,11 +26,12 @@ def preflight_analysis(series):
     fig = acf_and_pacf_test(series)
     return pvalue, fig
 
-def run(series, parameters):
+def run(series, parameters, model=None):
     p, d, q = parameters['p'], parameters['d'], parameters['q']
     P, D, Q, s = parameters['p'], parameters['d'], parameters['q'], parameters['s']
 
-    model = sm.tsa.statespace.SARIMAX(series, order=(p, d, q), seasonal_order=(P, D, Q, s), enforce_stationarity=False, enforce_invertibility=False)
+    if not model:
+        model = sm.tsa.statespace.SARIMAX(series, order=(p, d, q), seasonal_order=(P, D, Q, s), enforce_stationarity=False, enforce_invertibility=False)
     results = model.fit()
     print(results.summary())
     return model, results

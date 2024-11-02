@@ -7,3 +7,4 @@ streamlit==1.39.0
 prophet==1.1.6
 statsmodels==0.14.4
 streamlit-vertical-slider==2.5.5
+streamlit-toggle==0.1.3
