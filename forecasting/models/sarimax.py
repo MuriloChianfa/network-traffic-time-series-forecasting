@@ -62,12 +62,11 @@ def plot_forecasted(df, pred_ci, forecasted_values, timestep=60, num_of_future_s
         df_future.rename(columns={'predicted': 'actual'})
     ], ignore_index=True)
 
-    fig = plt.figure(figsize=(27, 9))
+    fig, ax = plt.subplots(figsize=(27, 9))
     plt.plot(df_combined['date'], df_combined['actual'], label='Forecasted Data', color='orange')
     plt.fill_between(future_dates, 0, pred_ci.iloc[:, 1], color='k', alpha=0.1)
 
     formatter = EngFormatter(unit='bps')
     plt.gca().yaxis.set_major_formatter(formatter)
     plt.legend()
-    #plt.show()
-    return fig, df_future
+    return fig, df_future, ax

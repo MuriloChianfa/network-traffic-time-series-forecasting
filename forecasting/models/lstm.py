@@ -181,7 +181,7 @@ def forecast_the_future(df, model, bps_scaled, bps_scaler, future=144, timeslot=
         'predicted': pd.concat([pd.Series([np.nan]*len(df)), df_future['predicted']])
     })
 
-    fig = plt.figure(figsize=(27, 9))
+    fig, ax = plt.subplots(figsize=(27, 9))
 
     plt.plot(df_combined['date'], df_combined['bps'], label='Actual')
     plt.plot(df_combined['date'], df_combined['predicted'], label='Forecasted', color='orange')
@@ -190,5 +190,4 @@ def forecast_the_future(df, model, bps_scaled, bps_scaler, future=144, timeslot=
     plt.gca().yaxis.set_major_formatter(formatter)
 
     plt.legend()
-    #plt.show()
-    return fig, df_future
+    return fig, df_future, ax

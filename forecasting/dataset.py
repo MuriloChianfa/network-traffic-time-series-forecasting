@@ -74,3 +74,31 @@ def setup_train_valid_test_split(dates, X, y, max_len=10, train_len=.6, valid_le
     y_test = y_test.reshape(-1, 1)
 
     return X_train, y_train, X_valid, y_valid, X_test, y_test, dates_train, dates_valid, dates_test
+
+def perform_test(df_future, date, value, target_column='predicted'):
+    dates = None
+    try:
+        dates = df_future['date']
+    except:
+        if not dates:
+            dates = df_future['ds']
+            target_column = 'yhat'
+    df_future['date'] = pd.to_datetime(dates)
+
+    input_date = pd.to_datetime(date)
+    df_future_sorted = df_future.sort_values('date')
+    df_past = df_future_sorted[df_future_sorted['date'] >= input_date]
+
+    if not df_past.empty:
+        last_entry = df_past.iloc[-1]
+        predicted_value = last_entry[target_column]
+        last_date = last_entry['date']
+
+        if value <= predicted_value:
+            print(f"The input value {value / 1_000_000} Mbps is lower than or equal to the predicted value {predicted_value / 1_000_000} Mbps at {last_date}.")
+        else:
+            print(f"The input value {value / 1_000_000} Mbps is higher than the predicted value {predicted_value / 1_000_000} Mbps at {last_date}.")
+
+        return predicted_value, last_date
+    else:
+        print("No earlier date found in the dataframe.")
