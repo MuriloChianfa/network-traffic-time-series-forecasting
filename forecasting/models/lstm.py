@@ -1,7 +1,7 @@
 import pandas as pd
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, GRU, Dense, Dropout, Bidirectional
+from tensorflow.keras.layers import LSTM, Dense, Dropout, Bidirectional
 
 from dataset import prepare_df_split, setup_train_valid_test_split
 from preprocess import trace_scaler
@@ -50,7 +50,6 @@ def run(df, bps_scaled, bps_scaler, parameters):
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend()
-    #plt.show()
 
     train_yhat = model.predict(X_train)
     valid_yhat = model.predict(X_valid)
@@ -149,7 +148,6 @@ def run(df, bps_scaled, bps_scaler, parameters):
         )
 
     plt.legend()
-    #plt.show()
     return model, fig, fig_model
 
 def forecast_the_future(df, model, bps_scaled, bps_scaler, future=144, timeslot=5, seq_length=10):

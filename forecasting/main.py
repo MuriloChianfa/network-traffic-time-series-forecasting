@@ -1,5 +1,6 @@
 import pickle
 import streamlit as st
+from io import StringIO
 from datetime import datetime
 
 import models
@@ -18,14 +19,19 @@ st.write(f"### Author: Murilo Chianfa | UEL")
 sb = st.sidebar
 sb.header("Model Parameters")
 
-dataset_name = sb.selectbox('Select Dataset', ('HW-Link-Level3', 'MK-VLAN33'))
+read_data = None
+dataset_name = sb.selectbox('Select Dataset', ('HW-Link-Level3', 'Upload a new dataset...'))
+if dataset_name == 'Upload a new dataset...':
+    uploaded_file = sb.file_uploader("New CSV dataset", 'csv', False)
+    if uploaded_file is not None:
+        read_data = StringIO(uploaded_file.getvalue().decode('utf-8'))
 st.write(f"#### Using \"{dataset_name}\" Dataset")
 
 model_choice = sb.selectbox('Select forecasting model', ('SARIMAX', 'Prophet', 'LSTM'))
 @st.cache_data
-def get_df(name):
-    return dataset.get_dataset(name)
-df = get_df(dataset_name)
+def get_df(name, read_data):
+    return dataset.get_dataset(st, name, read_data)
+df = get_df(dataset_name, read_data)
 
 parameters = models.hyperparams_by_model(model_choice, sb)
 
