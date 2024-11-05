@@ -1,0 +1,27 @@
+services:
+  network-traffic-forecasting:
+    build:
+      dockerfile: ./forecasting/Dockerfile
+    image: network-traffic-forecasting:latest
+    container_name: network-traffic-forecasting
+    hostname: network-traffic-forecasting
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./forecasting:/app
+      - ./datasets:/app/datasets
+    stdin_open: false
+    tty: false
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100k"
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
