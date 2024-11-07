@@ -5,6 +5,7 @@ __pycache__/
 /*.png
 /forecasting/*.png
 *.pkl
+datasets/*.json
 
 # C extensions
 *.so
