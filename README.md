@@ -24,8 +24,6 @@
 
 > [!IMPORTANT]
 >
-> Disclousure:
-> 
 > The following work and its results are the result of a project presented at the end of the subject of the pattern recognition class of the Master's in Science course Computing at the State University of Londrina (UEL) and does not have the objective of being published as a scientific article.
 
 You can read the [written paper](network-traffic-time-series-forecasting.pdf) here, please notice to the above advice.
