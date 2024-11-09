@@ -1,5 +1,4 @@
 */Dockerfile linguist-language=Dockerfile
 datasets/* linguist-vendored=true
 *.ipynb linguist-vendored=true
-paper/*.lex linguist-vendored=true
-paper/*.sty linguist-vendored=true
+paper/* linguist-vendored=true
