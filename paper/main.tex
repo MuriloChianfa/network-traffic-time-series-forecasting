@@ -1,46 +1,34 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% How to use writeLaTeX: 
-%
-% You edit the source code here on the left, and the preview on the
-% right shows you the result within a few seconds.
-%
-% Bookmark this page and share the URL with your co-authors. They can
-% edit at the same time!
-%
-% You can upload figures, bibliographies, custom classes and
-% styles using the files menu.
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \documentclass[12pt]{article}
 
 \usepackage{sbc-template}
-
 \usepackage{graphicx,url}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{subfigure}
+\usepackage[
+    backend=biber,natbib,
+    style=authoryear
+]{biblatex}
 
-%\usepackage[brazil]{babel}   
-\usepackage[utf8]{inputenc}  
+\addbibresource{references.bib}
 
+\newcommand{\SubItem}[1]{
+    {\setlength\itemindent{15pt} \item[-] #1}
+}
      
 \sloppy
 
-\title{Instructions for Authors of SBC Conferences\\ Papers and Abstracts}
+\title{Modelagem e Previsão de Tráfego de Rede:\\ Uma Abordagem para ISP's}
 
-\author{Luciana P. Nedel\inst{1}, Rafael H. Bordini\inst{2}, Flávio Rech
-  Wagner\inst{1}, Jomi F. Hübner\inst{3} }
+\author{Murilo A. Chianfa\inst{1}, Bruno B. Zarpelão\inst{1}, Sylvio B. Junior\inst{2} }
 
 
-\address{Instituto de Informática -- Universidade Federal do Rio Grande do Sul
-  (UFRGS)\\
-  Caixa Postal 15.064 -- 91.501-970 -- Porto Alegre -- RS -- Brazil
-\nextinstitute
-  Department of Computer Science -- University of Durham\\
-  Durham, U.K.
-\nextinstitute
-  Departamento de Sistemas e Computação\\
-  Universidade Regional de Blumenal (FURB) -- Blumenau, SC -- Brazil
-  \email{\{nedel,flavio\}@inf.ufrgs.br, R.Bordini@durham.ac.uk,
-  jomi@inf.furb.br}
+\address{Departamento de Computação -- Universidade Estadual de Londrina
+  (UEL)
+  \nextinstitute
+  Departamento de Engenharia Eletrônica e Arquitetura -- Universidade de Trieste (UNITS)
+  \email{\{murilo.chianfa,brunozarpelao\}@uel.br, sylvio.barbonjunior@units.it}
 }
 
 \begin{document} 
@@ -48,131 +36,141 @@
 \maketitle
 
 \begin{abstract}
-  This meta-paper describes the style to be used in articles and short papers
-  for SBC conferences. For papers in English, you should add just an abstract
-  while for the papers in Portuguese, we also ask for an abstract in
-  Portuguese (``resumo''). In both cases, abstracts should not have more than
-  10 lines and must be in the first page of the paper.
+  This study develops a method for network administrators to conduct extensive tests on traffic data using various time series forecasting models. Three algorithms were selected: SARIMAX, Prophet, and LSTM. The portal assists in selecting the best model, optimizing hyperparameters, and evaluating the trade-off between time and prediction efficiency.
 \end{abstract}
      
 \begin{resumo} 
-  Este meta-artigo descreve o estilo a ser usado na confecção de artigos e
-  resumos de artigos para publicação nos anais das conferências organizadas
-  pela SBC. É solicitada a escrita de resumo e abstract apenas para os artigos
-  escritos em português. Artigos em inglês deverão apresentar apenas abstract.
-  Nos dois casos, o autor deve tomar cuidado para que o resumo (e o abstract)
-  não ultrapassem 10 linhas cada, sendo que ambos devem estar na primeira
-  página do artigo.
+  Este estudo desenvolve um método para que administradores de rede possam realizar testes extensivos em dados de tráfego utilizando diversos modelos de previsão de séries temporais. Três algoritmos foram selecionados: SARIMAX, Prophet e LSTM. O portal auxilia na escolha do melhor modelo, na otimização de hiperparâmetros e na avaliação do tempo versus eficiência das previsões.
 \end{resumo}
 
 
-\section{General Information}
+\section{Introdução}
 
-All full papers and posters (short papers) submitted to some SBC conference,
-including any supporting documents, should be written in English or in
-Portuguese. The format paper should be A4 with single column, 3.5 cm for upper
-margin, 2.5 cm for bottom margin and 3.0 cm for lateral margins, without
-headers or footers. The main font must be Times, 12 point nominal size, with 6
-points of space before each paragraph. Page numbers must be suppressed.
+Atualmente, com o advento de novas tecnologias no setor de telecomunicações, como Internet das Coisas (IoT),  WiFi-7 e XGS-PON, estamos enfrentando um grande aumento no volume de tráfego de rede produzido como nunca antes visto [\cite{fleischer_using_2017}]. Provedores de Serviço de Internet (ISPs) tentam implementar técnicas de monitoramento e análise de dados para tentar otimizar o fluxo de trabalho dessas redes, mas técnicas tradicionais têm se mostrado ineficazes para este trabalho.
 
-Full papers must respect the page limits defined by the conference.
-Conferences that publish just abstracts ask for \textbf{one}-page texts.
+Previsão de tráfego de rede desempenha um papel fundamental no avanço das redes de computadores, áreas como gerenciamento, design, alocação de recursos, engenharia de tráfego e detecção de anomalias [\cite{troia_identification_2017}]. Duas principais categorias de predição são atualmente empregadas, \textit{long-term} e \textit{short-term}. \textit{Long-term} atualmente é mais utilizada para planejamento futuro de capacidade e recursos necessários, já \textit{Short-term} sendo empregada para melhorar a qualidade dos serviços como Qualidade de Serviço (QoS) e alocação dinâmica de recursos [\cite{andreoletti_network_2019}].
 
-\section{First Page} \label{sec:firstpage}
+\subsection{Objetivos da pesquisa}
 
-The first page must display the paper title, the name and address of the
-authors, the abstract in English and ``resumo'' in Portuguese (``resumos'' are
-required only for papers written in Portuguese). The title must be centered
-over the whole page, in 16 point boldface font and with 12 points of space
-before itself. Author names must be centered in 12 point font, bold, all of
-them disposed in the same line, separated by commas and with 12 points of
-space after the title. Addresses must be centered in 12 point font, also with
-12 points of space after the authors' names. E-mail addresses should be
-written using font Courier New, 10 point nominal size, with 6 points of space
-before and 6 points of space after.
+O principal foco desta pesquisa é desenvolver um portal para que administradores de rede possam realizar extensivos testes em seus próprios dados, utilizando diferentes modelos de previsão de séries temporais com diferentes parâmetros para cada modelo. Três principais perguntas poderão ser respondidas.
 
-The abstract and ``resumo'' (if is the case) must be in 12 point Times font,
-indented 0.8cm on both sides. The word \textbf{Abstract} and \textbf{Resumo},
-should be written in boldface and must precede the text.
+\begin{itemize}
+  \item Qual algoritmo estatístico ou de inteligência artificial melhor se adéqua ao cenário do tráfego da minha rede e de meus clientes?
+  \item Quais são as melhores combinações de hiper-parâmetros para meu tipo de tráfego?
+  \item O tempo para gerar o modelo versus sua eficiência de predição são adequados ao meu caso de uso levando em consideração diferentes vetores da rede?
+\end{itemize}
 
-\section{CD-ROMs and Printed Proceedings}
+\section{Trabalhos relacionados} \label{sec:relatedword}
 
-In some conferences, the papers are published on CD-ROM while only the
-abstract is published in the printed Proceedings. In this case, authors are
-invited to prepare two final versions of the paper. One, complete, to be
-published on the CD and the other, containing only the first page, with
-abstract and ``resumo'' (for papers in Portuguese).
+Extensas pesquisas mostram que modelos estatísticos como ARIMA e Holt-Winters podem chegar a um bom resultado quando temos bastante dados do tráfego de rede e estes possuem uma boa sazonalidade. Muitos destes trabalhos comparam estes modelos com modelos de aprendizado de máquina, obtendo um melhor resultado quanto geral nos testes propostos pelos mesmos [\cite{krishnaswamy_data-driven_2020}; \cite{madan_predicting_2018}]. 
 
-\section{Sections and Paragraphs}
+Alguns trabalhos utilizam-se especificamente de características temporais do tráfego de rede para categorizar e classificar ataques de rede DDoS [\cite{halladay_detection_2022}], outros utilizam uma abordagem híbrida para o mesmo propósito, também utilizando características temporais, colacionando-as com a entropia dos recursos dos fluxos IP observados [\cite{ding_tracking_2022}].
 
-Section titles must be in boldface, 13pt, flush left. There should be an extra
-12 pt of space before each title. Section numbering is optional. The first
-paragraph of each section should not be indented, while the first lines of
-subsequent paragraphs should be indented by 1.27 cm.
+\section{Escolha dos algorítmos}
 
-\subsection{Subsections}
+Para o trabalho proposto, foram selecionados três algoritmos, dois deles sendo modelos estatísticos SARIMAX, Prophet como um modelo de regressão ativa e, por fim, um modelo de rede neural autoregressivo LSTM. Todos estes se propõem a fazer previsões de séries temporais representada pela sequência de observações \( (y_1, y_2, \dots, y_t) \). A previsão para um horizonte \( h \) períodos à frente pode ser expressa da seguinte forma [\cite{adhikari_introductory_2013}].
 
-The subsection titles must be in boldface, 12pt, flush left.
+\[
+\left( y_1, y_2, \dots, y_t \right) \quad \xrightarrow{\text{Previsão}} \quad \hat{y}_{t+h} = f\left( y_t, y_{t-1}, \dots, y_{t-p+1} \right) + \epsilon_{t+h}
+\]
 
-\section{Figures and Captions}\label{sec:figs}
+\begin{itemize}
+    \item \( \left( y_1, y_2, \dots, y_t \right) \): Sequência histórica de observações da série temporal até o tempo \( t \).
+    \item \( \hat{y}_{t+h} \): Previsão do valor da série temporal no horizonte \( h \) períodos à frente, ou seja no tempo \( t+h \).
+    \item \( f\left( y_t, y_{t-1}, \dots, y_{t-p+1} \right) \): Função de previsão que modela a relação entre os valores atuais e passados da série. Esta função pode ser baseada em diversos modelos, como AR(p), ARIMA e até nas redes neurais.
+    \item \( \epsilon_{t+h} \): Termo de erro ou ruído na previsão, geralmente assumido com média zero e independente das observações passadas.
+\end{itemize}
 
+\subsection{Modelo SARIMAX}
 
-Figure and table captions should be centered if less than one line
-(Figure~\ref{fig:exampleFig1}), otherwise justified and indented by 0.8cm on
-both margins, as shown in Figure~\ref{fig:exampleFig2}. The caption font must
-be Helvetica, 10 point, boldface, with 6 points of space before and after each
-caption.
+O SARIMAX, é um modelo derivado do original Autoregressive Integrated Moving Average (ARIMA) que é um eficiente modelo estatístico utilizado para previsão de séries temporais. Este modelo é derivado de um princípio fundamental de que os valores futuros podem ser previstos utilizando-se de características do ruído branco \( \epsilon_t \) e valores do passado da série temporal [\cite{madan_predicting_2018}].
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=.5\textwidth]{fig1.jpg}
-\caption{A typical figure}
-\label{fig:exampleFig1}
+\[
+\Phi(L) \, (1 - L) \, d y_t = \theta(L) \, \epsilon_t
+\]
+
+\subsection{Modelo Prophet}
+
+Já o Prophet, é um modelo desenvolvido por engenheiros do Facebook, ele foi projetado para lidar com dados que exibem padrões sazonais fortes, além de ser robusto a valores ausentes e mudanças de tendências. A equação geral do modelo leva em consideração componentes de tendência \( g(t) \), sazonalidade \( s(t) \), eventos \( h(t) \) e a variação não explicada pelos componentes anteriores ou ruído branco \( \epsilon_t \) [\cite{taylor_forecasting_2017}].
+
+\[
+y(t) = g(t) + s(t) + h(t) + \epsilon_t
+\]
+
+\subsection{Modelo LSTM}
+
+O Long Short-Term Memory (LSTM) é um modelo avançado de rede neural recorrente (RNN), ele foi criado para resolver o problema do desaparecimento do gradiente, comum nas RNNs tradicionais, permitindo capturar informações por períodos mais longos. Ele pode ser representado pela série de equações [\cite{zamanzadeh_darban_deep_2025}].
+
+\[
+\begin{aligned}
+f_t &= \sigma\left(W_f \cdot \begin{bmatrix} h_{t-1} \\ x_t \end{bmatrix} + b_f\right) \\
+i_t &= \sigma\left(W_i \cdot \begin{bmatrix} h_{t-1} \\ x_t \end{bmatrix} + b_i\right) \\
+\tilde{C}_t &= \tanh\left(W_C \cdot \begin{bmatrix} h_{t-1} \\ x_t \end{bmatrix} + b_C\right) \\
+C_t &= f_t \ast C_{t-1} + i_t \ast \tilde{C}_t \\
+o_t &= \sigma\left(W_o \cdot \begin{bmatrix} h_{t-1} \\ x_t \end{bmatrix} + b_o\right) \\
+h_t &= o_t \ast \tanh(C_t)
+\end{aligned}
+\]
+
+\section{Avaliação}
+
+Para avaliar, foi proposto diferentes datasets extraídos de grandes redes de computadores como ISPs e IXes. O primeiro dataset que avaliamos foi extraído de um link de trânsito com capacidade de 1 Gbps, a seguir, podemos ver os resultados de previsão para cada modelo.
+
+\begin{figure}[!htb]
+    \label{fig:forecasting}
+    \subfigure[\label{fig:sarimax}SARIMAX]{
+        \includegraphics[width=.3\textwidth]{paper/images/first-forecasting-sarimax.png}
+    }\hfill
+    \subfigure[\label{fig:prophet}Prophet]{
+        \includegraphics[width=.3\textwidth]{paper/images/first-forecasting-prophet.png}
+    }
+    \subfigure[\label{fig:lstm}LSTM]{
+        \includegraphics[width=.3\textwidth]{paper/images/first-forecasting-lstm.png}
+    }
+    \caption{Comparação das previsões utilizando os três modelos}
 \end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=.3\textwidth]{fig2.jpg}
-\caption{This figure is an example of a figure caption taking more than one
-  line and justified considering margins mentioned in Section~\ref{sec:figs}.}
-\label{fig:exampleFig2}
-\end{figure}
+\section{Resultados obtidos}
 
-In tables, try to avoid the use of colored or shaded backgrounds, and avoid
-thick, doubled, or unnecessary framing lines. When reporting empirical data,
-do not use more decimal digits than warranted by their precision and
-reproducibility. Table caption must be placed before the table (see Table 1)
-and the font used must also be Helvetica, 10 point, boldface, with 6 points of
-space before and after each caption.
+Os melhores resultados de previsão obtidos foram dos modelos estatísticos, tendo em vista que o LSTM não conseguiu prever muito bem o padrão da série temporal, isso em todos os datasets que testamos. Já sob os recursos computacionais, observamos que o Prophet foi o mais "leve" em relação à tempo de treinamento e peso do modelo salvo em armazenamento secundário.
 
 \begin{table}[ht]
 \centering
-\caption{Variables to be considered on the evaluation of interaction
-  techniques}
-\label{tab:exTable1}
-\includegraphics[width=.7\textwidth]{table.jpg}
+\caption{Comparação do Modelos}
+\label{tab:comparing}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Modelo} & \textbf{Tempo de Treinamento} & \textbf{Peso em Disco} \\
+\midrule
+LSTM     & $\sim$17 segundos & 11 MB \\
+SARIMAX & $\sim$4 segundos & 137 MB \\
+Prophet  & $\sim$1 segundo   & 140 KB \\
+\bottomrule
+\end{tabular}
 \end{table}
 
-\section{Images}
+Respondendo às perguntas da seção de Objetivos da Pesquisa, temos os seguintes resultados.
 
-All images and illustrations should be in black-and-white, or gray tones,
-excepting for the papers that will be electronically available (on CD-ROMs,
-internet, etc.). The image resolution on paper should be about 600 dpi for
-black-and-white images, and 150-300 dpi for grayscale images.  Do not include
-images with excessive resolution, as they may take hours to print, without any
-visible difference in the result. 
+\begin{itemize}
+  \item Qual algoritmo estatístico ou de inteligência artificial melhor se adéqua ao cenário do tráfego da minha rede e de meus clientes?
+    \SubItem SARIMAX ou Prophet dependendo do objetivo, já que o SARIMAX foi melhor porém mais lento.
+  \item Quais são as melhores combinações de hiper-parâmetros para meu tipo de tráfego?
+    \SubItem SARIMAX: p3, d0, q1; Prophet: padrão; LSTM: 10 épocas, 96 neuronios, 4 layers.
+  \item O tempo para gerar o modelo versus sua eficiência de predição são adequados ao meu caso de uso levando em consideração diferentes vetores da rede?
+    \SubItem O Prophet não conseguiu prever os maiores momentos de tráfego, já o SARIMAX sim, então dependendo do contexto podemos empregar um ou o outro.
+\end{itemize}
 
-\section{References}
+\section{Possíveis melhorias e Trabalhos futuros}
 
-Bibliographic references must be unambiguous and uniform.  We recommend giving
-the author names references in brackets, e.g. \cite{knuth:84},
-\cite{boulic:91}, and \cite{smith:99}.
+Como podemos observar na seção de avaliaçăo, o modelo LSTM fez uma péssima previsão, porém imaginamos que isso seja por conta da modelagem da rede neural. Em trabalhos futuros, o autor irá desenvolver melhores redes neurais para tentar aumentar os resultados obtidos com o modelo LSTM.
 
-The references must be listed using 12 point font size, with 6 points of space
-before each reference. The first line of each reference should not be
-indented, while the subsequent should be indented by 0.5 cm.
+Para trabalhos futuros, o autor estuda formas de correlacionar a previsão do tráfego de rede com novas features de séries temporais também extraídas dos fluxos IP de grandes redes de computadores como ISPs e IXes, com o objetivo de tentar identificar desvios de padrões, tráfego anormal e congestionamento derivado de possíveis ataques com origens globais.
 
-\bibliographystyle{sbc}
-\bibliography{sbc-template}
+\section{Contexto}
+
+O seguinte trabalho e seus resultados são frutos de um projeto apresentado no final da disciplina da aula de reconhecimento de padrões do curso de Mestrado em Ciência da Computação da Universidade Estadual de Londrina (UEL) e não possui o objetivo de ser publicado como um artigo científico.
+
+\newpage
+\printbibliography
 
 \end{document}
